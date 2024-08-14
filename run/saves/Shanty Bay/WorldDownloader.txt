@@ -1,0 +1,8 @@
+#Version: 1.0.6 (Nixuge/WorldDownloaderForge), 4.1.1.1-SNAPSHOT (Pokechu22/WorldDownloader) - Minecraft 1.8.9
+#Thu Jun 06 00:26:48 CDT 2024
+Entity.ArmorStand.Enabled=false
+LinkedWorlds=
+LastSaved=1717651608655
+Entity.FallingSand.Enabled=false
+Entity.Item.Enabled=false
+Entity.x-extended\:hologram.Enabled=false
