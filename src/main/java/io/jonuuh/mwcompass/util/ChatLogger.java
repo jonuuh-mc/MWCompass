@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ChatLogger
 {
-    private static final IChatComponent header = new ChatComponentText("§8[§7MWCompass§8] ");
+    private static final IChatComponent header = new ChatComponentText("\u00a78[\u00a77MWCompass\u00a78] ");
 
     public static void addLog(String log)
     {

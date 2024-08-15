@@ -22,7 +22,7 @@ public class GameListener
 {
     private final Minecraft mc;
     private final Pattern mapMsgPattern = Pattern.compile("^You are currently playing on ([A-Za-z]\\s*)+$");
-    private final Pattern ingamePattern = Pattern.compile("^\\s*[0-9]+\\sClass\\sPoints\\s*$");
+    private final Pattern ingamePattern = Pattern.compile("^\\s*[0-9]+\\sClass\\sPoints?\\s*$");
     private final KeyBinding keyBinding;
 
     private CompassRenderer compassRenderer;
@@ -68,7 +68,7 @@ public class GameListener
         {
             for (String cleanScore : Util.getScoreboardScores(sb, true))
             {
-                if (cleanScore.contains("Gates Open:") && !sentMapReq)
+                if (cleanScore.contains("Gates Open:") && !this.sentMapReq)
                 {
                     this.mc.thePlayer.sendChatMessage("/map");
                     this.sentMapReq = true;
@@ -89,7 +89,7 @@ public class GameListener
 
         Scoreboard sb = this.mc.theWorld.getScoreboard();
 
-        if (sb != null && this.compassRenderer != null)
+        if (sb != null && this.compassRenderer != null && Util.getScoreboardHeader(sb).equals("MEGA WALLS"))
         {
             List<String> cleanScores = Util.getScoreboardScores(sb, true);
 
@@ -101,7 +101,7 @@ public class GameListener
             String cleanScore = cleanScores.get(11);
 
             // Actual current ingame status
-            boolean isActuallyIngame = Util.getScoreboardHeader(sb).equals("MEGA WALLS") && ingamePattern.matcher(cleanScore).matches();
+            boolean isActuallyIngame = ingamePattern.matcher(cleanScore).matches();
 
             // What the renderer thinks the current ingame status is (last update)
             boolean compassRendererIngame = this.compassRenderer.isIngame();
@@ -110,26 +110,19 @@ public class GameListener
             if (isActuallyIngame && !compassRendererIngame)
             {
                 this.compassRenderer.setIngame(true);
-                ChatLogger.addLog("Rejoined, enabled CompassRenderer", EnumChatFormatting.GREEN);
+                ChatLogger.addLog("Rejoined -> enabled CompassRenderer", EnumChatFormatting.GREEN);
             }
 
             // If actually not ingame but renderer thinks we are, update it
             if (!isActuallyIngame && compassRendererIngame)
             {
                 this.compassRenderer.setIngame(false);
-                ChatLogger.addLog("Left game , disabled CompassRenderer", EnumChatFormatting.GREEN);
+                ChatLogger.addLog("Left game -> disabled CompassRenderer", EnumChatFormatting.GREEN);
             }
-
         }
     }
 
-//    @SubscribeEvent
-//    public void onServerChange(FMLNetworkEvent.ClientConnectedToServerEvent event)
-//    {
-//        System.out.println(event.connectionType);
-//    }
-
-    // Parse /map messages and create
+    // Parse /map messages and create compass renderer
     @SubscribeEvent
     public void onClientChatReceived(ClientChatReceivedEvent event)
     {
@@ -151,7 +144,7 @@ public class GameListener
     {
         MapData mapData = MapData.getMapData(parsedMapName);
 
-        // Remove old compassRenderer
+        // Unregister old compassRenderer
         if (this.compassRenderer != null)
         {
             MinecraftForge.EVENT_BUS.unregister(this.compassRenderer);

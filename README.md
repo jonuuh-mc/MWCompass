@@ -1,1 +1,1 @@
-## Minecraft Forge Template 1.8.9
+## Mega Walls Compass

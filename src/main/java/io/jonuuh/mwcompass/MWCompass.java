@@ -1,10 +1,9 @@
 package io.jonuuh.mwcompass;
 
-import io.jonuuh.mwcompass.command.Command;
 import io.jonuuh.mwcompass.config.Settings;
+import io.jonuuh.mwcompass.event.ConnectionListener;
 import io.jonuuh.mwcompass.event.GameListener;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -20,11 +19,13 @@ import org.lwjgl.input.Keyboard;
 public class MWCompass
 {
     public static final String ModID = "mwcompass";
+    public static final String version = "1.0.0";
 
     @Mod.EventHandler
     public void FMLPreInit(FMLPreInitializationEvent event)
     {
         Settings.createInstance(event.getSuggestedConfigurationFile());
+        UpdateChecker.createInstance();
     }
 
     @Mod.EventHandler
@@ -33,10 +34,11 @@ public class MWCompass
         KeyBinding keyBinding = new KeyBinding("<description>", Keyboard.KEY_NONE, ModID);
         ClientRegistry.registerKeyBinding(keyBinding);
 
-        ClientCommandHandler.instance.registerCommand(new Command());
+        Settings.getInstance().incrementLoginsSinceLastUpdateNotification();
+        Settings.getInstance().save();
+//        ClientCommandHandler.instance.registerCommand(new Command());
 
-//        MinecraftForge.EVENT_BUS.register(new Events(keyBinding));
-//        MinecraftForge.EVENT_BUS.register(new CompassRenderer());
         MinecraftForge.EVENT_BUS.register(new GameListener(keyBinding));
+        MinecraftForge.EVENT_BUS.register(new ConnectionListener());
     }
 }
