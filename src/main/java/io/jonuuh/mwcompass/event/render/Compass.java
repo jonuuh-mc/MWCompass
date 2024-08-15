@@ -1,6 +1,6 @@
 package io.jonuuh.mwcompass.event.render;
 
-import io.jonuuh.mwcompass.MapData;
+import io.jonuuh.mwcompass.util.MapData;
 import io.jonuuh.mwcompass.config.Settings;
 import net.minecraft.util.EnumChatFormatting;
 
@@ -29,14 +29,12 @@ class Compass extends ArrayDeque<RoundedRect>
 
     private void offerPadding(int paddingAmt, float height, float radius)
     {
-//        float rbg = 0.07058823529411765F;
         float rbg = 0.50F;
         float opacity;
 
         for (int i = 0; i < paddingAmt; i++)
         {
             opacity = ((i + 1) % 5 != 0) ? 0.00F : 0.75F;
-//            this.offer(new RoundedRect('|', 0, 0, 0, height, radius, EnumChatFormatting.DARK_GRAY, opacity));
             this.offer(new RoundedRect('|', 0, 0, 0, height, radius, new Color(rbg, rbg, rbg, opacity)));
         }
     }

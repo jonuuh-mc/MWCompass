@@ -1,6 +1,6 @@
 package io.jonuuh.mwcompass.event;
 
-import io.jonuuh.mwcompass.UpdateChecker;
+import io.jonuuh.mwcompass.util.UpdateChecker;
 import io.jonuuh.mwcompass.config.Settings;
 import io.jonuuh.mwcompass.util.ChatLogger;
 import net.minecraft.client.Minecraft;
@@ -44,11 +44,6 @@ public class ConnectionListener
                 IChatComponent chatComponent = new ChatComponentText("New update available here: ").appendSibling(openUrlChatComponent.createCopy());
                 ChatLogger.addLog(chatComponent, true);
             }
-//            else
-//            {
-//                IChatComponent chatComponent = new ChatComponentText("New update NOT available here: ").appendSibling(openUrlChatComponent.createCopy());
-//                ChatLogger.addLog(chatComponent, true);
-//            }
         }
     }
 }

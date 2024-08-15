@@ -1,4 +1,4 @@
-package io.jonuuh.mwcompass;
+package io.jonuuh.mwcompass.util;
 
 public enum MapData
 {

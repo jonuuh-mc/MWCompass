@@ -1,6 +1,6 @@
 package io.jonuuh.mwcompass.event.render;
 
-import io.jonuuh.mwcompass.MapData;
+import io.jonuuh.mwcompass.util.MapData;
 import io.jonuuh.mwcompass.config.Settings;
 import io.jonuuh.mwcompass.util.ChatLogger;
 import net.minecraft.client.Minecraft;
@@ -47,7 +47,6 @@ public class CompassRenderer
         this.immutableCompass = new Compass(mapData, this.paddingAmt, (this.trackHeight * 8), 1.0F);
         this.lastCompass = this.immutableCompass;
 
-//        this.baseCompass = (Deque<RoundedRect>) Collections.unmodifiableCollection(compass);
         ChatLogger.addLog("Created Compass from MapData: " + Arrays.toString(mapData.getDirs()), EnumChatFormatting.GREEN);
     }
 

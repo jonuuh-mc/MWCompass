@@ -1,4 +1,6 @@
-package io.jonuuh.mwcompass;
+package io.jonuuh.mwcompass.util;
+
+import io.jonuuh.mwcompass.MWCompass;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManagerFactory;

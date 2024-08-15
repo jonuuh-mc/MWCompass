@@ -10,10 +10,10 @@ class RoundedRect
     private final Character id;
     private float centerX;
     private float centerY;
-    public final float width;
-    public final float height;
-    public final float radius;
-    public final Color color;
+    private final float width;
+    private final float height;
+    private final float radius;
+    private final Color color;
 
     RoundedRect()
     {

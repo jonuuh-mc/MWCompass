@@ -2,7 +2,7 @@
     {
         "modid": "mwcompass",
         "name": "MWCompass",
-        "description": "...",
+        "description": "Displays a compass for team base directions in Mega Walls",
         "version": "${version}",
         "mcversion": "${mcversion}",
         "url": "",
