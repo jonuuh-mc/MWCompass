@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL11;
 
 class RoundedRect
 {
-    private final Character id;
+    private final Character label;
     private float centerX;
     private float centerY;
     private final float width;
@@ -17,7 +17,7 @@ class RoundedRect
 
     RoundedRect()
     {
-        this.id = null;
+        this.label = null;
         this.centerX = 0.0F;
         this.centerY = 0.0F;
         this.width = 0.0F;
@@ -26,9 +26,9 @@ class RoundedRect
         this.color = null;
     }
 
-    RoundedRect(Character id, float centerX, float centerY, float width, float height, float radius, Color color)
+    RoundedRect(Character label, float centerX, float centerY, float width, float height, float radius, Color color)
     {
-        this.id = id;
+        this.label = label;
         this.centerX = centerX;
         this.centerY = centerY;
         this.width = width;
@@ -37,14 +37,15 @@ class RoundedRect
         this.color = color;
     }
 
-    RoundedRect(Character id, float centerX, float centerY, float width, float height, float radius, EnumChatFormatting chatFormatting, float opacity)
+    RoundedRect(Character label, float centerX, float centerY, float width, float height, float radius, EnumChatFormatting chatFormatting, float opacity)
     {
         if (!chatFormatting.isColor())
         {
-            throw new IllegalArgumentException("EnumChatFormatting param should be a color");
+            System.out.println("[MWCompass] EnumChatFormatting param should be a color");
+            chatFormatting = EnumChatFormatting.WHITE;
         }
 
-        this.id = id;
+        this.label = label;
         this.centerX = centerX;
         this.centerY = centerY;
         this.width = width;
@@ -58,9 +59,9 @@ class RoundedRect
         this.color = new Color(r, g, b, opacity);
     }
 
-    public Character getId()
+    public Character getLabel()
     {
-        return this.id;
+        return this.label;
     }
 
     public float getCenterX()
@@ -73,16 +74,6 @@ class RoundedRect
         this.centerX = centerX;
     }
 
-    public float getCenterY()
-    {
-        return centerY;
-    }
-
-    public void setCenterY(float centerY)
-    {
-        this.centerY = centerY;
-    }
-
     /*
       Draws a rounded rectangle
       Given the params, calculates vertices for four corners/quadrants of a circle, counter-clockwise from (1, 0) on a unit circle.
@@ -92,6 +83,11 @@ class RoundedRect
     */
     public void draw(int glMode)
     {
+        if (this.color.getA() == 0.0F)
+        {
+            return;
+        }
+
         float ninetyDegRad = (float) (Math.PI / 2);
 
         float width = Math.max(this.width, 0);
@@ -133,5 +129,11 @@ class RoundedRect
             // Using MathHelper because it uses sin & cos tables (should be faster than Math.cos)
             GL11.glVertex2f(centerX - (radius * MathHelper.cos(angle)), centerY + (radius * MathHelper.sin(angle)));
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.valueOf(this.label);
     }
 }

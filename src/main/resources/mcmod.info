@@ -2,10 +2,10 @@
     {
         "modid": "mwcompass",
         "name": "MWCompass",
-        "description": "Displays a compass for team base directions in Mega Walls",
+        "description": "Displays a compass for team base directions while in Mega Walls games",
         "version": "${version}",
         "mcversion": "${mcversion}",
-        "url": "",
+        "url": "https://github.com/jonuuh-mc/MWCompass",
         "updateUrl": "",
         "authorList": ["jonuuh"],
         "credits": "",

@@ -24,6 +24,12 @@ public class Util
         return header != null ? EnumChatFormatting.getTextWithoutFormattingCodes(header) : "";
     }
 
+    public static String getScoreboardScoreAtIndex(Scoreboard sb, boolean removeFormatting, int index)
+    {
+        List<String> cleanScores = getScoreboardScores(sb, removeFormatting);
+        return (index < cleanScores.size()) ? cleanScores.get(index) : null;
+    }
+
     public static List<String> getScoreboardScores(Scoreboard sb, boolean removeFormatting)
     {
         if (sb == null || sb.getObjectiveInDisplaySlot(1) == null)

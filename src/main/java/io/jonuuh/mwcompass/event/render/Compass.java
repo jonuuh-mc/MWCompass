@@ -1,41 +1,154 @@
 package io.jonuuh.mwcompass.event.render;
 
-import io.jonuuh.mwcompass.util.MapData;
 import io.jonuuh.mwcompass.config.Settings;
-import net.minecraft.util.EnumChatFormatting;
+import io.jonuuh.mwcompass.util.MapData;
 
-import java.util.ArrayDeque;
-import java.util.Map;
-
-class Compass extends ArrayDeque<RoundedRect>
+class Compass
 {
-    Compass(MapData mapData, int paddingAmt, float segmentHeight, float segmentRadius)
+    private final RoundedRect[] compass;
+    private final float scale;
+    private final int windowSize;
+    private final int compassLength;
+    private final int paddingAmt;
+    private final float segmentHeight;
+    private final float segmentRadius;
+
+    private int leftPointer;
+
+    Compass(MapData mapData, float scale, float segmentHeight, float segmentRadius)
     {
         Character[] dirs = mapData.getDirs();
-        Map<Character, EnumChatFormatting> colorMap = Settings.getInstance().getColorMap();
+        this.scale = scale;
+        this.compassLength = Math.round(360 * scale);
 
-        this.offer(new RoundedRect(dirs[0], 0, 0, 0, segmentHeight, segmentRadius, colorMap.get(dirs[0]), 0.75F));
-        offerPadding(paddingAmt, segmentHeight, segmentRadius);
+        this.compass = new RoundedRect[compassLength];
+        this.windowSize = compassLength / 2;
+        this.paddingAmt = (compassLength - 4) / 4;
 
-        this.offer(new RoundedRect(dirs[1], 0, 0, 0, segmentHeight, segmentRadius, colorMap.get(dirs[1]), 0.75F));
-        offerPadding(paddingAmt, segmentHeight, segmentRadius);
+        this.segmentHeight = segmentHeight;
+        this.segmentRadius = segmentRadius;
 
-        this.offer(new RoundedRect(dirs[2], 0, 0, 0, segmentHeight, segmentRadius, colorMap.get(dirs[2]), 0.75F));
-        offerPadding(paddingAmt, segmentHeight, segmentRadius);
+        // 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35
+        // ^                 ^                         ^                          ^
+        //                                 |                 x                 |
+        //        |                                                                  |                       --->
 
-        this.offer(new RoundedRect(dirs[3], 0, 0, 0, segmentHeight, segmentRadius, colorMap.get(dirs[3]), 0.75F));
-        offerPadding(paddingAmt, segmentHeight, segmentRadius);
+        // 0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35
+        // 1  2  3  4  5  6  7  8  ^  1  2  3  4  5  6  7  8  ^  1  2  3  4  5  6  7  8  ^  1  2  3  4  5  6  7  8  ^
+
+        addPointerSegment(0, dirs[0]);
+        addPadding(1);
+
+        addPointerSegment(paddingAmt + 1, dirs[1]);
+        addPadding(paddingAmt + 2);
+
+        addPointerSegment((paddingAmt * 2) + 2, dirs[2]);
+        addPadding((paddingAmt * 2) + 3);
+
+        addPointerSegment((paddingAmt * 3) + 3, dirs[3]);
+        addPadding((paddingAmt * 3) + 4);
+
+//        System.out.println(Arrays.toString(compass));
+//        System.out.println(compass.length);
+//
+//        int count = 0;
+//        for (int i = 0; i < compass.length; i++)
+//        {
+//            RoundedRect segment = compass[i];
+//
+//            if (segment.getLabel() == '-')
+//            {
+//                count++;
+//            }
+//            else
+//            {
+//                System.out.println(count + ": " + segment.getLabel());
+//            }
+//        }
+//        System.out.println((-1 % compassLength) + ": " + compass.length + " " + compassLength);
     }
 
-    private void offerPadding(int paddingAmt, float height, float radius)
+    RoundedRect[] getCompass()
     {
-        float rbg = 0.50F;
-        float opacity;
+        return compass;
+    }
 
-        for (int i = 0; i < paddingAmt; i++)
+    int getLeftPointer()
+    {
+        return leftPointer;
+    }
+
+    void setLeftPointer(float normalizedPlayerYaw)
+    {
+        this.leftPointer = Math.round(normalizedPlayerYaw * scale);
+//        System.out.println((this.getLeftPointer() /*+ i*/) % this.getCompassLength());
+    }
+
+    int getWindowSize()
+    {
+        return windowSize;
+    }
+
+    int getCompassLength()
+    {
+        return compassLength;
+    }
+
+    Character getLeftPreviewLabel()
+    {
+        // Offset to account for clipped segments
+        return getPreviewLabel(leftPointer - 0, false);
+    }
+
+    Character getRightPreviewLabel()
+    {
+        // Offset to account for clipped segments
+        return getPreviewLabel(leftPointer + windowSize - 1, true);
+    }
+
+    private Character getPreviewLabel(int start, boolean forward)
+    {
+        char previewLabel = '?';
+        int i = start;
+
+        while (previewLabel == '?')
         {
-            opacity = ((i + 1) % 5 != 0) ? 0.00F : 0.75F;
-            this.offer(new RoundedRect('|', 0, 0, 0, height, radius, new Color(rbg, rbg, rbg, opacity)));
+            RoundedRect segment = compass[i % compassLength];
+
+            if (segment != null)
+            {
+                Character possibleLabel = segment.getLabel();
+
+                if (possibleLabel != '-')
+                {
+                    previewLabel = possibleLabel;
+                }
+            }
+
+            i = (forward ? i + 1 : i - 1);
         }
+
+        return previewLabel;
+    }
+
+    private void addPadding(int start)
+    {
+        for (int i = start; i < start + paddingAmt; i++)
+        {
+            if (i % 10 == 0)
+            {
+                addTickSegment(i, '-', new Color(0.5F, 0.5F, 0.5F, 0.75F));
+            }
+        }
+    }
+
+    private void addPointerSegment(int index, Character label)
+    {
+        compass[index] = new RoundedRect(label, 0, 0, 0, segmentHeight, segmentRadius, Settings.getInstance().getColorMap().get(label), 0.75F);
+    }
+
+    private void addTickSegment(int index, Character label, Color color)
+    {
+        compass[index] = new RoundedRect(label, 0, 0, 0, segmentHeight, segmentRadius, color);
     }
 }
